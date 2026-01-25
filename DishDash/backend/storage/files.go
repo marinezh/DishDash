@@ -6,19 +6,20 @@ import (
 	"path/filepath"
 )
 
-func dataDir() (string, error) {
-	home, err := os.UserHomeDir()
-	if err != nil {
+func DataDir() (string, error) {
+	dir := filepath.Join("..", "data")
+	if err := os.MkdirAll(dir, 0755); err != nil {
 		return "", err
 	}
-
-	dir := filepath.Join(home, ".dishdash")
-	err = os.MkdirAll(dir, 0755)
-	if err != nil {
-		return "", err
-	}
-
 	return dir, nil
+}
+
+func DataFile(name string) (string, error) {
+	dir, err := DataDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, name), nil
 }
 
 func loadJSON(filename string, v any) error {
