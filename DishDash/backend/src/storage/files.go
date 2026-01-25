@@ -7,7 +7,7 @@ import (
 )
 
 func DataDir() (string, error) {
-	dir := filepath.Join("..", "data")
+	dir := filepath.Join(".", "data")
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return "", err
 	}
@@ -23,7 +23,7 @@ func DataFile(name string) (string, error) {
 }
 
 func loadJSON(filename string, v any) error {
-	dir, err := dataDir()
+	dir, err := DataDir()
 	if err != nil {
 		return err
 	}
@@ -42,7 +42,7 @@ func loadJSON(filename string, v any) error {
 }
 
 func saveJSON(filename string, v any) error {
-	dir, err := dataDir()
+	dir, err := DataDir()
 	if err != nil {
 		return err
 	}
