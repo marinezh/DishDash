@@ -47,4 +47,4 @@ Thumbs.db
 .env.local
 
 # Local storage
-../data/
+/data/
