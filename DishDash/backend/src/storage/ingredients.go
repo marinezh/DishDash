@@ -1,17 +1,42 @@
 package storage
 
 import (
-	"DishDash/backend/models"
+	"errors"
+
+	"DishDash/src/models"
 )
 
-func LoadIngredients() ([]models.Ingredient, error) {
-	var list []models.Ingredient
-	if err := loadJSON("ingredients.json", &list); err != nil {
-		return nil, err
+func AddIngredient(ing models.Ingredient) error {
+	list, err := LoadFridge()
+	if err != nil {
+		return err
 	}
-	return list, nil
+
+	list = append(list, ing)
+	return SaveFridge(list)
 }
 
-func SaveIngredients(list []models.Ingredient) error {
-	return saveJSON("ingredients.json", list)
+func RemoveIngredient(ing models.Ingredient) error {
+	list, err := LoadFridge()
+	if err != nil {
+		return err
+	}
+
+	// find ingredient by name
+	index := -1
+	for i, item := range list {
+		if item.Name == ing.Name {
+			index = i
+			break
+		}
+	}
+
+	if index == -1 {
+		return errors.New("ingredient not found")
+	}
+
+	// remove from slice
+	list = append(list[:index], list[index+1:]...)
+
+	return SaveFridge(list)
 }
