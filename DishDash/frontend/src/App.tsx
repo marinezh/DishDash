@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { hello } from "./api/api";
+import { status } from "./api/api";
 
 export default function App() {
-  const [msg, setMsg] = useState("");
+  const [statusMsg, setStatusMsg] = useState("");
 
   useEffect(() => {
-    hello().then((data) => setMsg(data.message));
+    status().then((data) => setStatusMsg(data.status));
   }, []);
 
-  return <div>{msg || "Loading..."}</div>;
+  return <div>{statusMsg || "Loading..."}</div>;
 }

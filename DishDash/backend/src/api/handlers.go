@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"encoding/json"
@@ -8,44 +8,59 @@ import (
 	"DishDash/src/storage"
 )
 
-func GetIngredientsHandler(w http.ResponseWriter, r *http.Request) {
-	list, err := storage.LoadIngredients()
+func getIngredientsHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	list, err := storage.LoadFridge()
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	json.NewEncoder(w).Encode(list)
 }
 
 func AddIngredientHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
 	var ing models.Ingredient
-	json.NewDecoder(r.Body).Decode(&ing)
-
-	err := storage.AddIngredient(ing)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
+	if err := json.NewDecoder(r.Body).Decode(&ing); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
-	w.WriteHeader(201)
+
+	if err := storage.AddIngredient(ing); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(ing)
 }
 
-func GetFavoritesHandler(w http.ResponseWriter, r *http.Request) {
-	list, err := storage.LoadFavorites()
-	if err != nil {
-		http.Error(w, err.Error(), 500)
+
+func RemoveIngredientHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	json.NewEncoder(w).Encode(list)
-}
 
-func AddFavoriteHandler(w http.ResponseWriter, r *http.Request) {
-	var fav models.Favorite
-	json.NewDecoder(r.Body).Decode(&fav)
-
-	err := storage.AddFavorite(fav)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
+	var ing models.Ingredient
+	if err := json.NewDecoder(r.Body).Decode(&ing); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
-	w.WriteHeader(201)
+
+	if err := storage.RemoveIngredient(ing); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(ing)
 }

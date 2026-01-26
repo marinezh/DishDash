@@ -1,17 +1,27 @@
 package main
 
 import (
-	"encoding/json"
+	"log"
 	"net/http"
+	"github.com/rs/cors"
+
+	"DishDash/src/api"
 )
 
 func main() {
-	http.HandleFunc("/api/hello", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		json.NewEncoder(w).Encode(map[string]string{
-			"message": "hello from backend",
-		})
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/health", api.HealthHandler)
+	mux.HandleFunc("/fridge/add", api.AddIngredientHandler)
+	mux.HandleFunc("/fridge/remove", api.RemoveIngredientHandler)
+
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:5173"},
+		AllowedMethods: []string{"GET", "POST", "OPTIONS"},
 	})
 
-	http.ListenAndServe(":8080", nil)
+	handler := c.Handler(mux)
+
+	log.Println("Server started at :8080")
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }
