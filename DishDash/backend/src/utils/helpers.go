@@ -6,12 +6,21 @@ import (
 	"DishDash/src/models"
 )
 
-
 func Normalize(s string) string {
 	s = strings.ToLower(strings.TrimSpace(s))
-	if strings.HasSuffix(s, "s") {
-		s = strings.TrimSuffix(s, "s")
+
+	if strings.HasSuffix(s, "ies") {
+		return strings.TrimSuffix(s, "ies") + "y"
 	}
+
+	if strings.HasSuffix(s, "oes") {
+		return strings.TrimSuffix(s, "oes") + "o"
+	}
+
+	if strings.HasSuffix(s, "s") {
+		return strings.TrimSuffix(s, "s")
+	}
+
 	return s
 }
 
