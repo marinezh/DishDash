@@ -4,16 +4,57 @@ import type {Recipe} from "../types/recipe"
 const Card = styled.div`
   border: 1px solid #e5e5e5;
   border-radius: 12px;
-  padding: 20px;
   background: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: relative;
-  transition: transform 0.2s, box-shadow 0.2s;
-  
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  overflow: hidden;
+
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px) scale(1.02);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   }
+`;
+
+const ImageContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  margin-bottom: 16px;
+`;
+
+const RecipeImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  
+`;
+
+const HeartButton = styled.button`
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(121, 121, 121, 0.8);
+  border: none;
+  border-radius: 20%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.125rem;
+  transition: background 0.2s, transform 0.2s;
+  
+  // &:hover {
+  //   background: rgba(255, 255, 255, 1);
+  //   transform: scale(1.1);
+  // }
+`;
+
+const CardContent = styled.div`
+ margin: 0 16px 16px 16px;
 `;
 
 const Header = styled.div`
@@ -23,30 +64,54 @@ const Header = styled.div`
   margin-bottom: 12px;
 `;
 
-const MealTypeTag = styled.span`
-  background: #d4f4dd;
-  color: #2d6a3e;
-  padding: 6px 12px;
+const MealTypeTag = styled.span<{ $bgColor: string; $textColor: string }>`
+  background: ${props => props.$bgColor};
+  color: ${props => props.$textColor};
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+`;
+const DietTypeTag = styled.span<{ $bgColor: string; $textColor: string }>`
+  background: ${props => props.$bgColor};
+  color: ${props => props.$textColor};
+  padding: 4px 10px;
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 500;
 `;
 
-const DeleteButton = styled.button`
-  background: transparent;
-  border: none;
-  color: #ef4444;
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  
-  &:hover {
-    color: #dc2626;
-  }
+const CountryTag = styled.span`
+  color: #000000;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid #e5e5e5;
 `;
+
+const DietTypeContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+`;
+
+// const DeleteButton = styled.button`
+//   background: transparent;
+//   border: none;
+//   color: #ef4444;
+//   cursor: pointer;
+//   padding: 4px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   font-size: 1.25rem;
+  
+//   &:hover {
+//     color: #dc2626;
+//   }
+// `;
 
 const RecipeName = styled.h3`
   font-size: 1.25rem;
@@ -98,37 +163,78 @@ const ProgressFill = styled.div<{ percentage: number }>`
 interface RecipeCardProps {
   recipe: Recipe;
   availableIngredients?: number;
-  onDelete?: () => void;
+  onFavoriteToggle?: () => void;
+  isFavorite?: boolean;
 }
 
-export function RecipeCard({ recipe, availableIngredients = 0, onDelete }: RecipeCardProps) {
+// Helper function to get meal type colors
+const getMealTypeColors = (mealType: string): { bgColor: string; textColor: string } => {
+  const normalizedMealType = mealType.toLowerCase();
+  
+  if (normalizedMealType.includes('lunch')) {
+    return { bgColor: '#faedfc', textColor: '#ad0fc9' }; // Green
+  } else if (normalizedMealType.includes('dinner')) {
+    return { bgColor: '#fef3c6', textColor: '#973C00' }; // Amber/Yellow
+  } else if (normalizedMealType.includes('snack')) {
+    return { bgColor: '#fee2e2', textColor: '#991b1b' }; // Red/Pink
+  } else if (normalizedMealType.includes('breakfast')) {
+    return { bgColor: '#dbeafe', textColor: '#1e40af' }; // Blue
+  } else {
+    return { bgColor: '#dcfce7', textColor: '#016630' }; // DarkGreen
+  }
+};
+
+export function RecipeCard({ recipe, availableIngredients = 0, onFavoriteToggle, isFavorite = false }: RecipeCardProps) {
   const totalIngredients = recipe.ingredients.length;
   const available = Math.min(availableIngredients, totalIngredients);
   const percentage = totalIngredients > 0 ? Math.round((available / totalIngredients) * 100) : 0;
+  const mealTypeColors = getMealTypeColors(recipe.mealType);
+  const imageUrl = recipe.imageUrl || `/images/${recipe.id}.jpg`;
 
   return (
     <Card>
+    
+      <ImageContainer>
+        <RecipeImage src={imageUrl} alt={recipe.name} onError={(e) => {
+          e.currentTarget.src = '/images/0.png'; // Fallback image
+        }} />
+        <HeartButton onClick={onFavoriteToggle} aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}>
+          {isFavorite ? '❤️' : '🩶'}
+        </HeartButton>
+      </ImageContainer>
+      <CardContent>
       <Header>
-        <MealTypeTag>{recipe.mealType}</MealTypeTag>
-        {onDelete && (
+        <MealTypeTag $bgColor={mealTypeColors.bgColor} $textColor={mealTypeColors.textColor}>
+          {recipe.mealType}
+        </MealTypeTag>
+        <CountryTag>{recipe.country}</CountryTag>
+        {/* {onDelete && (
           <DeleteButton onClick={onDelete} aria-label="Delete recipe">
             🗑️
           </DeleteButton>
+        )} */}
+      </Header>  
+        <RecipeName>{recipe.name}</RecipeName>
+        {recipe.dietType && recipe.dietType.length > 0 && (
+          <DietTypeContainer>
+            {recipe.dietType.map((diet, index) => (
+              <DietTypeTag key={index} $bgColor="#dcfce7" $textColor="#016630">
+                {diet}
+              </DietTypeTag>
+            ))}
+          </DietTypeContainer>
         )}
-      </Header>
+        <IngredientsText>{totalIngredients} ingredients</IngredientsText>
       
-      <RecipeName>{recipe.name}</RecipeName>
-      
-      <IngredientsText>{totalIngredients} ingredients</IngredientsText>
-      
-      <AvailabilityInfo>
-        <AvailabilityText>{available} of {totalIngredients} available</AvailabilityText>
-        <PercentageText>{percentage}%</PercentageText>
-      </AvailabilityInfo>
-      
-      <ProgressBar>
-        <ProgressFill percentage={percentage} />
-      </ProgressBar>
+        <AvailabilityInfo>
+          <AvailabilityText>{available} of {totalIngredients} available</AvailabilityText>
+          <PercentageText>{percentage}%</PercentageText>
+        </AvailabilityInfo>
+        
+        <ProgressBar>
+          <ProgressFill percentage={percentage} />
+        </ProgressBar>
+      </CardContent>
     </Card>
   );
 }
