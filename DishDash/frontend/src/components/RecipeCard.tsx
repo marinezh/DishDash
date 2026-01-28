@@ -4,16 +4,57 @@ import type {Recipe} from "../types/recipe"
 const Card = styled.div`
   border: 1px solid #e5e5e5;
   border-radius: 12px;
-  padding: 20px;
   background: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: relative;
-  transition: transform 0.2s, box-shadow 0.2s;
-  
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  overflow: hidden;
+
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px) scale(1.02);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   }
+`;
+
+const ImageContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  margin-bottom: 16px;
+`;
+
+const RecipeImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  
+`;
+
+const HeartButton = styled.button`
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(121, 121, 121, 0.8);
+  border: none;
+  border-radius: 20%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.125rem;
+  transition: background 0.2s, transform 0.2s;
+  
+  // &:hover {
+  //   background: rgba(255, 255, 255, 1);
+  //   transform: scale(1.1);
+  // }
+`;
+
+const CardContent = styled.div`
+ margin: 0 16px 16px 16px;
 `;
 
 const Header = styled.div`
@@ -122,6 +163,8 @@ const ProgressFill = styled.div<{ percentage: number }>`
 interface RecipeCardProps {
   recipe: Recipe;
   availableIngredients?: number;
+  onFavoriteToggle?: () => void;
+  isFavorite?: boolean;
 }
 
 // Helper function to get meal type colors
@@ -141,14 +184,25 @@ const getMealTypeColors = (mealType: string): { bgColor: string; textColor: stri
   }
 };
 
-export function RecipeCard({ recipe, availableIngredients = 0 }: RecipeCardProps) {
+export function RecipeCard({ recipe, availableIngredients = 0, onFavoriteToggle, isFavorite = false }: RecipeCardProps) {
   const totalIngredients = recipe.ingredients.length;
   const available = Math.min(availableIngredients, totalIngredients);
   const percentage = totalIngredients > 0 ? Math.round((available / totalIngredients) * 100) : 0;
   const mealTypeColors = getMealTypeColors(recipe.mealType);
+  const imageUrl = recipe.imageUrl || `/images/${recipe.id}.jpg`;
 
   return (
     <Card>
+    
+      <ImageContainer>
+        <RecipeImage src={imageUrl} alt={recipe.name} onError={(e) => {
+          e.currentTarget.src = '/images/0.png'; // Fallback image
+        }} />
+        <HeartButton onClick={onFavoriteToggle} aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}>
+          {isFavorite ? '❤️' : '🩶'}
+        </HeartButton>
+      </ImageContainer>
+      <CardContent>
       <Header>
         <MealTypeTag $bgColor={mealTypeColors.bgColor} $textColor={mealTypeColors.textColor}>
           {recipe.mealType}
@@ -160,26 +214,27 @@ export function RecipeCard({ recipe, availableIngredients = 0 }: RecipeCardProps
           </DeleteButton>
         )} */}
       </Header>  
-      <RecipeName>{recipe.name}</RecipeName>
-      {recipe.dietType && recipe.dietType.length > 0 && (
-        <DietTypeContainer>
-          {recipe.dietType.map((diet, index) => (
-            <DietTypeTag key={index} $bgColor="#dcfce7" $textColor="#016630">
-              {diet}
-            </DietTypeTag>
-          ))}
-        </DietTypeContainer>
-      )}
-      <IngredientsText>{totalIngredients} ingredients</IngredientsText>
+        <RecipeName>{recipe.name}</RecipeName>
+        {recipe.dietType && recipe.dietType.length > 0 && (
+          <DietTypeContainer>
+            {recipe.dietType.map((diet, index) => (
+              <DietTypeTag key={index} $bgColor="#dcfce7" $textColor="#016630">
+                {diet}
+              </DietTypeTag>
+            ))}
+          </DietTypeContainer>
+        )}
+        <IngredientsText>{totalIngredients} ingredients</IngredientsText>
       
-      <AvailabilityInfo>
-        <AvailabilityText>{available} of {totalIngredients} available</AvailabilityText>
-        <PercentageText>{percentage}%</PercentageText>
-      </AvailabilityInfo>
-      
-      <ProgressBar>
-        <ProgressFill percentage={percentage} />
-      </ProgressBar>
+        <AvailabilityInfo>
+          <AvailabilityText>{available} of {totalIngredients} available</AvailabilityText>
+          <PercentageText>{percentage}%</PercentageText>
+        </AvailabilityInfo>
+        
+        <ProgressBar>
+          <ProgressFill percentage={percentage} />
+        </ProgressBar>
+      </CardContent>
     </Card>
   );
 }
