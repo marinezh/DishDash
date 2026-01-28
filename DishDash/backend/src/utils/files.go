@@ -6,12 +6,17 @@ import (
 	"path/filepath"
 )
 
+var dataDir = "./data"
+
+func SetDataDir(dir string) {
+	dataDir = dir
+}
+
 func DataDir() (string, error) {
-	dir := filepath.Join(".", "data")
-	if err := os.MkdirAll(dir, 0755); err != nil {
+	if err := os.MkdirAll(dataDir, 0755); err != nil {
 		return "", err
 	}
-	return dir, nil
+	return dataDir, nil
 }
 
 func DataFile(name string) (string, error) {
@@ -56,4 +61,8 @@ func FavoritesPath() (string, error) {
 
 func RecipesPath() (string, error) {
 	return DataFile("recipes.json")
+}
+
+func ShoppingPath() (string, error) {
+	return DataFile("shopping.json")
 }
