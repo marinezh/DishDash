@@ -23,9 +23,9 @@ const Header = styled.div`
   margin-bottom: 12px;
 `;
 
-const MealTypeTag = styled.span`
-  background: #d4f4dd;
-  color: #2d6a3e;
+const MealTypeTag = styled.span<{ $bgColor: string; $textColor: string }>`
+  background: ${props => props.$bgColor};
+  color: ${props => props.$textColor};
   padding: 6px 12px;
   border-radius: 8px;
   font-size: 0.875rem;
@@ -101,15 +101,35 @@ interface RecipeCardProps {
   onDelete?: () => void;
 }
 
+// Helper function to get meal type colors
+const getMealTypeColors = (mealType: string): { bgColor: string; textColor: string } => {
+  const normalizedMealType = mealType.toLowerCase();
+  
+  if (normalizedMealType.includes('lunch')) {
+    return { bgColor: '#d4f4dd', textColor: '#2d6a3e' }; // Green
+  } else if (normalizedMealType.includes('dinner')) {
+    return { bgColor: '#fef3c7', textColor: '#92400e' }; // Amber/Yellow
+  } else if (normalizedMealType.includes('snack')) {
+    return { bgColor: '#fee2e2', textColor: '#991b1b' }; // Red/Pink
+  } else if (normalizedMealType.includes('breakfast')) {
+    return { bgColor: '#dbeafe', textColor: '#1e40af' }; // Blue
+  } else {
+    return { bgColor: '#e5e7eb', textColor: '#374151' }; // Gray (default)
+  }
+};
+
 export function RecipeCard({ recipe, availableIngredients = 0, onDelete }: RecipeCardProps) {
   const totalIngredients = recipe.ingredients.length;
   const available = Math.min(availableIngredients, totalIngredients);
   const percentage = totalIngredients > 0 ? Math.round((available / totalIngredients) * 100) : 0;
+  const mealTypeColors = getMealTypeColors(recipe.mealType);
 
   return (
     <Card>
       <Header>
-        <MealTypeTag>{recipe.mealType}</MealTypeTag>
+        <MealTypeTag $bgColor={mealTypeColors.bgColor} $textColor={mealTypeColors.textColor}>
+          {recipe.mealType}
+        </MealTypeTag>
         {onDelete && (
           <DeleteButton onClick={onDelete} aria-label="Delete recipe">
             🗑️
