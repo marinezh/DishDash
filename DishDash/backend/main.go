@@ -14,6 +14,7 @@ func main() {
 	mux.HandleFunc("/health", api.HealthHandler)
 
 	mux.HandleFunc("/recipes", api.GetRecipesHandler)
+	mux.HandleFunc("/recipes/", api.GetCookHandler)
 
 	mux.HandleFunc("/fridge", api.GetFridgeHandler)
 	mux.HandleFunc("/fridge/", api.GetFridgeSectionHandler)
