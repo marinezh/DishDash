@@ -33,7 +33,6 @@ func HasIngredientByName(list []models.Ingredient, name string) bool {
 	return false
 }
 
-// check name + quantity
 func HasIngredient(fridge []models.Ingredient, ing models.Ingredient) bool {
 	for _, f := range fridge {
 		if Normalize(f.Name) == Normalize(ing.Name) &&

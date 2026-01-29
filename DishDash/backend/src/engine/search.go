@@ -49,6 +49,3 @@ func SearchRecipes(
 
 	return SuggestRecipes(candidates, all, favorites)
 }
-
-
-// ADD new endpoint /recipe/ID should return image XD from discord

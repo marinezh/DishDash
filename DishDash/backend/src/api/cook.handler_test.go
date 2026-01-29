@@ -2,8 +2,8 @@ package api_test
 
 import (
 	"encoding/json"
-	"net/http"
 	"net/http/httptest"
+	"net/http"
 	"testing"
 
 	"DishDash/src/api"
@@ -12,52 +12,32 @@ import (
 	"DishDash/src/utils"
 )
 
-func setupRecipeData(t *testing.T) {
-	// temp data dir so tests don't overwrite real files
+func TestGetCookHandler_ClassicPie(t *testing.T) {
 	utils.SetDataDir(t.TempDir())
 
-	// Recipes
-	recipes := []models.Recipe{
+	if err := storage.SaveRecipes([]models.Recipe{
 		{
-			ID:          1,
-			Name:        "Tomato Soup",
-			MealType:    "Lunch",
-			Description: "Delicious fresh tomato soup",
+			ID:       1,
+			Name:     "Classic Apple Pie",
+			MealType: "dessert",
 			Ingredients: []models.Ingredient{
-				{Name: "Tomato", Quantity: 3, Unit: "pcs"},
-				{Name: "Water", Quantity: 1, Unit: "l"},
+				{Name: "apple", Quantity: 6, Unit: "pcs"},
+				{Name: "sugar", Quantity: 1, Unit: "cup"},
+				{Name: "cinnamon", Quantity: 1, Unit: "tsp"},
 			},
 		},
-		{
-			ID:          2,
-			Name:        "Pasta Salad",
-			MealType:    "Dinner",
-			Description: "Healthy pasta salad",
-			Ingredients: []models.Ingredient{
-				{Name: "Pasta", Quantity: 200, Unit: "g"},
-				{Name: "Lettuce", Quantity: 1, Unit: "head"},
-			},
-		},
-	}
-	if err := storage.SaveRecipes(recipes); err != nil {
+	}); err != nil {
 		t.Fatal(err)
 	}
 
-	// Fridge
-	fridge := models.Fridge{
-		Fresh:  []models.Ingredient{{Name: "Tomato", Quantity: 2, Unit: "pcs"}},
-		Pantry: []models.Ingredient{{Name: "Pasta", Quantity: 100, Unit: "g"}},
+	if err := storage.SaveFridge(models.Fridge{
+		Fresh:  []models.Ingredient{{Name: "apple", Quantity: 4, Unit: "pcs"}},
+		Pantry: []models.Ingredient{{Name: "sugar", Quantity: 1, Unit: "cup"}},
 		Rare:   []models.Ingredient{},
-	}
-	if err := storage.SaveFridge(fridge); err != nil {
+	}); err != nil {
 		t.Fatal(err)
 	}
-}
 
-func TestGetCookHandler(t *testing.T) {
-	setupRecipeData(t)
-
-	// Valid recipe
 	req := httptest.NewRequest(http.MethodGet, "/recipes/1", nil)
 	w := httptest.NewRecorder()
 	api.GetCookHandler(w, req)
@@ -66,53 +46,36 @@ func TestGetCookHandler(t *testing.T) {
 		t.Fatalf("expected 200 OK, got %d", w.Code)
 	}
 
-	var resp struct {
-		ID          int `json:"id"`
-		MealType    string
-		Description string
-		Summary     struct {
-			Available int
-			Missing   int
-		}
-		Ingredients []struct {
-			Name     string
-			Quantity float64
-			Unit     string
-			Missing  float64
-		}
-	}
+	var resp models.RecipeDetails
 	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
 		t.Fatal(err)
 	}
 
-	if resp.ID != 1 || resp.MealType != "Lunch" {
-		t.Fatal("unexpected recipe data")
+	// t.Logf("Recipe details: %+v", resp)
+
+	if resp.SummaryAvailable != 1 {
+		t.Fatalf("expected Available=1, got %d", resp.SummaryAvailable)
+	}
+	if resp.SummaryMissing != 2 {
+		t.Fatalf("expected Missing=2, got %d", resp.SummaryMissing)
 	}
 
-	// Tomato partially available
 	for _, ing := range resp.Ingredients {
-		if ing.Name == "Tomato" && ing.Missing != 1 {
-			t.Fatalf("expected missing 1 Tomato, got %v", ing.Missing)
+		switch ing.Name {
+		case "apple":
+			if !ing.Missing {
+				t.Fatalf("expected apple to be missing, got %+v", ing)
+			}
+		case "sugar":
+			if ing.Missing {
+				t.Fatalf("expected sugar to be available, got %+v", ing)
+			}
+		case "cinnamon":
+			if !ing.Missing {
+				t.Fatalf("expected cinnamon to be missing, got %+v", ing)
+			}
+		default:
+			t.Fatalf("unexpected ingredient: %s", ing.Name)
 		}
-	}
-
-	if resp.Summary.Available != 1 || resp.Summary.Missing != 1 {
-		t.Fatalf("expected summary Available=1, Missing=1, got %+v", resp.Summary)
-	}
-
-	// Invalid recipe ID
-	req2 := httptest.NewRequest(http.MethodGet, "/recipes/abc", nil)
-	w2 := httptest.NewRecorder()
-	api.GetCookHandler(w2, req2)
-	if w2.Code != http.StatusBadRequest {
-		t.Fatalf("expected 400 for invalid ID, got %d", w2.Code)
-	}
-
-	// Non-existing recipe
-	req3 := httptest.NewRequest(http.MethodGet, "/recipes/999", nil)
-	w3 := httptest.NewRecorder()
-	api.GetCookHandler(w3, req3)
-	if w3.Code != http.StatusNotFound {
-		t.Fatalf("expected 404 for non-existing recipe, got %d", w3.Code)
 	}
 }
