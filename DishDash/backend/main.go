@@ -22,6 +22,8 @@ func main() {
 	mux.HandleFunc("/fridge/remove", api.DeletePositionHandler)
 	mux.HandleFunc("/fridge/increase", api.IncreaseHandler)
 	mux.HandleFunc("/fridge/decrease", api.DecreaseHandler)
+	mux.HandleFunc("/fridge/increase-list", api.IncreaseListHandler)
+	mux.HandleFunc("/fridge/decrease-list", api.DecreaseListHandler)
 
 	mux.HandleFunc("/search", api.SearchHandler)
 
