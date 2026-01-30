@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"log"
 	"net/http"
 	"github.com/rs/cors"
@@ -43,6 +44,11 @@ func main() {
 	})
 
 	handler := c.Handler(mux)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 
 	log.Println("Server started at :8080")
 	log.Fatal(http.ListenAndServe(":8080", handler))
