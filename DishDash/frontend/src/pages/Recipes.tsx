@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { getRecipes, searchRecipes } from "../api/api";
+import { addFavorite, getFavorites, getRecipes, removeFavorite, searchRecipes } from "../api/api";
 import { RecipeCard } from "../components/RecipeCard";
 import type { SearchResult } from "../types/search";
 import type { Recipe } from "../types/recipe";
@@ -51,6 +51,7 @@ export function Recipes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [favorites, setFavorites] = useState<Set<number>>(new Set());
 
   // Load all recipes on page mount
   useEffect(() => {
@@ -65,6 +66,17 @@ export function Recipes() {
         setError((e as Error).message ?? "Unknown error");
       } finally {
         setLoading(false);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const favs = await getFavorites();
+        setFavorites(new Set(favs.map((fav) => fav.id)));
+      } catch (e) {
+        console.error("Load favorites error:", e);
       }
     })();
   }, []);
@@ -128,10 +140,27 @@ export function Recipes() {
         <Grid>
           {data.map((item, index) => {
             const recipe = 'Recipe' in item ? item.Recipe : item;
+            const isFavorite = favorites.has(recipe.id);
             return (
               <RecipeCard
                 key={`${recipe.id}-${index}`}
                 recipe={recipe}
+                isFavorite={isFavorite}
+                onFavoriteToggle={async () => {
+                  const next = new Set(favorites);
+                  try {
+                    if (isFavorite) {
+                      await removeFavorite(recipe.id);
+                      next.delete(recipe.id);
+                    } else {
+                      await addFavorite({ id: recipe.id, name: recipe.name });
+                      next.add(recipe.id);
+                    }
+                    setFavorites(next);
+                  } catch (e) {
+                    console.error("Favorite toggle error:", e);
+                  }
+                }}
               />
             );
           })}
