@@ -1,7 +1,22 @@
 [
   {
     "id": 24,
-    "name": "Vegetarian Veggie Omelette",
-    "image": ""
+    "name": "Vegetarian Veggie Omelette"
+  },
+  {
+    "id": 1,
+    "name": "Classic Apple Pie"
+  },
+  {
+    "id": 2,
+    "name": "Chocolate Brownies"
+  },
+  {
+    "id": 120,
+    "name": "Baked Apple Chips"
+  },
+  {
+    "id": 102,
+    "name": "Apple Slices with Peanut Butter"
   }
 ]
