@@ -44,7 +44,8 @@ func main() {
 
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"http://localhost:5173",
-								"https://mariiazhytnikova.github.io", },
+								"https://mariiazhytnikova.github.io",
+								"https://mariiazhytnikova.github.io/DishDash/", },
 		AllowedMethods: []string{"GET", "POST", "OPTIONS"},
 		AllowedHeaders: []string{"Content-Type"},
 	})
