@@ -10,7 +10,7 @@ The app is designed as a scalable product, with future plans for personalization
 
 ## 🌐 Live Demo
 
-- **Frontend:** https://your-frontend-url.com  
+- **Frontend:** [https://mariiazhytnikova.github.io/DishDash/](https://mariiazhytnikova.github.io/DishDash/)
 - **Backend API:** https://backend-ancient-waterfall-8399.fly.dev  
 
 ## 🔑 Key Features
@@ -63,9 +63,9 @@ npm install
 npm run dev
 ```
 The app will be available at:
-
+```
 http://localhost:5173
-
+```
 
 ***Environment configuration***
 
@@ -75,12 +75,6 @@ Create a .env file in the frontend directory and set:
 
 ```
 VITE_API_URL=http://localhost:8080
-```
-
-For production or deployed usage, use:
-
-```
-VITE_API_URL=https://backend-ancient-waterfall-8399.fly.dev
 ```
 
 Restart the development server after updating the `.env` file.
