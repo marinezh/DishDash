@@ -10,6 +10,7 @@ const BASE_URL = import.meta.env.DEV
   ? "/api"                            // dev uses Vite proxy
   : import.meta.env.VITE_API_URL;     // prod uses Fly.io URL
 
+console.log("BASE_URL =", BASE_URL);
 
 export type Ingredient = {
   name: string;
@@ -66,6 +67,8 @@ export type RecipeDetails = {
 
 export async function status() {
   const res = await fetch(`${BASE_URL}/health`);
+  console.log("Calling health endpoint at:", BASE_URL + "/health");
+  console.log("Response object:", res);
   if (!res.ok) throw new Error(`healthcheck failed with ${res.status}`);
   return res.json();
 }
