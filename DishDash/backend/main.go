@@ -45,7 +45,7 @@ func main() {
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"http://localhost:5173",
 								"https://mariiazhytnikova.github.io",
-								"https://mariiazhytnikova.github.io/DishDash/", },
+								"https://mariiazhytnikova.github.io/DishDash", },
 		AllowedMethods: []string{"GET", "POST", "OPTIONS"},
 		AllowedHeaders: []string{"Content-Type"},
 	})
@@ -57,6 +57,6 @@ func main() {
 		port = "8080"
 	}
 
-	log.Println("Server started at :8080")
-	log.Fatal(http.ListenAndServe(":8080", handler))
+	log.Println("Server started at :" + port)
+	log.Fatal(http.ListenAndServe(":"+port, handler))
 }
