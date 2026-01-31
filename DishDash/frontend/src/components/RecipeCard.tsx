@@ -148,13 +148,14 @@ export function RecipeCard({ recipe, availableIngredients = 0, onFavoriteToggle,
   const available = Math.min(availableIngredients, totalIngredients);
   const percentage = totalIngredients > 0 ? Math.round((available / totalIngredients) * 100) : 0;
   const mealTypeColors = getMealTypeColors(recipe.mealType);
-  const imageUrl = recipe.imageUrl || `/small/${recipe.id}.jpg`;
+  // const imageUrl = recipe.imageUrl || `/small/${recipe.id}.jpg`;
+  const imageUrl = recipe.imageUrl || `${import.meta.env.BASE_URL}small/${recipe.id}.jpg`;
 
   return (
     <Card>
       <ImageContainer>
         <RecipeImage src={imageUrl} alt={recipe.name} onError={(e) => {
-          e.currentTarget.src = '/small/0.png'; // Fallback image
+          e.currentTarget.src = `${import.meta.env.BASE_URL}small/0.png`; // Fallback image
         }} />
         <HeartButton onClick={onFavoriteToggle} aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}>
           {isFavorite ? '❤️' : '🩶'}
