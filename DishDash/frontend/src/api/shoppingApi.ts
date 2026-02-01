@@ -37,7 +37,7 @@ export async function clearShopping(): Promise<void> {
 }
 
 export async function sendShoppingListToEmail(email: string): Promise<void> {
-  const res = await fetch(`${BASE_URL}/shopping/send`, {
+  const res = await fetch(`${BASE_URL}/shopping/email`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
