@@ -1,16 +1,6 @@
 {
   "items": [
     {
-      "name": "dark chocolate",
-      "quantity": 200,
-      "unit": "g"
-    },
-    {
-      "name": "coconut cream",
-      "quantity": 1,
-      "unit": "cup"
-    },
-    {
       "name": "maple syrup",
       "quantity": 2,
       "unit": "tbsp"
@@ -18,6 +8,11 @@
     {
       "name": "tomato",
       "quantity": 2,
+      "unit": "pcs"
+    },
+    {
+      "name": "milk",
+      "quantity": 0.5,
       "unit": "pcs"
     }
   ]

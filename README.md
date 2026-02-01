@@ -109,5 +109,5 @@ http://localhost:8080
 
 ## 🖼️ Assets & Credits
 
-- Recipe was generated with AI and used for demonstration purposes only
+- ⚠️ All recipes are AI-generated and provided for demonstration purposes only. Do not use for cooking.
 - Images are taken from  https://www.pexels.com/ and used for demonstration purposes only
