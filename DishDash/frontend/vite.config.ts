@@ -5,7 +5,7 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
-    base: "/DishDash/",
+    base: mode === "production" ? "/DishDash/" : "/",
     plugins: [
       react({
         babel: {
