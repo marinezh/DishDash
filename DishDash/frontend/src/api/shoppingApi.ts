@@ -46,7 +46,7 @@ export async function sendShoppingListToEmail(email: string): Promise<void> {
   if (!res.ok) throw new Error(`send email failed with ${res.status}`);
 }
 
-export async function createWoltOrder(items: Ingredient[]): Promise<{ orderId: string; url: string }> {
+export async function createWoltOrder(_items: Ingredient[]): Promise<{ orderId: string; url: string }> {
   // TODO: Future implementation - integrate with Wolt API
   return new Promise((resolve) => {
     setTimeout(() => {
