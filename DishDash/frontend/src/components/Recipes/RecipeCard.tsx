@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import type {Recipe} from "../types/recipe"
-import { getMealTypeColors } from "../utils/colors";
+import type {Recipe} from "../../types/recipe"
+import { getMealTypeColors } from "../../utils/colors";
 
 const Card = styled.div`
   border: 1px solid #e5e5e5;

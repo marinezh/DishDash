@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { addFavorite, getFavorites,getRecipes,removeFavorite, getRecipeDetails, getFridge } from "../api";
-import { RecipeCard } from "../components/RecipeCard";
+import { RecipeCard } from "../components/Recipes/RecipeCard";
 import type { SearchResult } from "../types/search";
 import type { Recipe } from "../types/recipe";
 import type { RecipeDetails, Ingredient } from "../api";
-import { RecipeDetailModal } from "../components/RecipeDetailModal";
+import { RecipeDetailModal } from "../components/Recipes/RecipeDetailModal";
 
 const Grid = styled.div`
   display: grid;

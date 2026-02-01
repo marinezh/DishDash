@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { getFridge, addIngredient, deleteIngredient, increaseIngredient, type Fridge } from "../api";
-import { AddIngredientModal, type AddIngredientPayload } from "../components/AddIngredientModal";
+import { AddIngredientModal, type AddIngredientPayload } from "../components/Ingredients/AddIngredientModal";
 
 const Grid = styled.div`
   display: flex;

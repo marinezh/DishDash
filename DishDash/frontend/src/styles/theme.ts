@@ -4,9 +4,10 @@ export const theme = {
     panel: "#FAFAFA",
     border: "rgba(255,255,255,0.08)",
     text: "#000000",
+    title: "#1FA9E4",
     muted: "#000000",
-    active: "#3b82f6",
-	check: "yellow"
+    active: "#1FA9E4",
+	  check: "yellow"
   },
   radius: {
     md: "12px",
