@@ -1,12 +1,26 @@
-import { Container, ErrorState } from "../components/ShoppingList/styles";
+import styled from "styled-components";
 import { ShoppingListHeader } from "../components/ShoppingList/ShoppingListHeader";
 import { StateDisplay } from "../components/ShoppingList/StateDisplay";
 import { ShoppingListTableComponent } from "../components/ShoppingList/ShoppingListTable";
 import { ShoppingListFooter } from "../components/ShoppingList/ShoppingListFooter";
 import { AddItemModal } from "../components/ShoppingList/AddItemModal";
+import { ClearConfirmModal } from "../components/ShoppingList/ClearConfirmModal";
 import { SendEmailModal } from "../components/ShoppingList/SendEmailModal";
 import { SuccessModal } from "../components/ShoppingList/SuccessModal";
 import { useShoppingList } from "../hooks/useShoppingList";
+
+const Container = styled.div`
+  width: 100%;
+  padding: 24px;
+`;
+
+const ErrorState = styled.div`
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+`;
 
 export function ShoppingList() {
   const {
@@ -15,6 +29,7 @@ export function ShoppingList() {
     error,
     removingItem,
     clearing,
+    showClearAllModal,
     showAddModal,
     formData,
     adding,
@@ -33,6 +48,8 @@ export function ShoppingList() {
     setEmail,
     setShowEmailModal,
     setShowSuccessModal,
+    handleOpenClearConfirm,
+    handleCancelClearConfirm,
     handleRemoveItem,
     handleUpdateQuantity,
     handleAddItem,
@@ -46,7 +63,7 @@ export function ShoppingList() {
       <ShoppingListHeader
         itemsCount={items.length}
         onAddClick={() => setShowAddModal(true)}
-        onClearClick={handleClearAll}
+        onClearClick={handleOpenClearConfirm}
         isClearing={clearing}
       />
 
@@ -86,6 +103,13 @@ export function ShoppingList() {
         onSubmit={handleAddItem}
         onClose={() => setShowAddModal(false)}
         inputRef={nameInputRef}
+      />
+
+      <ClearConfirmModal
+        isOpen={showClearAllModal}
+        isClearing={clearing}
+        onConfirm={handleClearAll}
+        onCancel={handleCancelClearConfirm}
       />
 
       <SendEmailModal

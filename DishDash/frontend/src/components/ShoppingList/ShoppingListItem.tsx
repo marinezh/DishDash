@@ -1,5 +1,104 @@
-import { ListItem, ItemName, ItemQuantity, QuantityControl, QuantityButton, QuantityDisplay, RemoveButton } from "./styles";
+import styled from "styled-components";
 import type { Ingredient } from "../../api";
+
+const ListItem = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 100px;
+  gap: 16px;
+  padding: 16px;
+  border-bottom: 1px solid #e5e5e5;
+  align-items: center;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: #fafafa;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+`;
+
+const ItemName = styled.span`
+  font-weight: 500;
+  color: #1a1a1a;
+`;
+
+const ItemQuantity = styled.span`
+  color: #666;
+  font-size: 0.95rem;
+`;
+
+const RemoveButton = styled.button`
+  padding: 6px 12px;
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #fecaca;
+    border-color: #f87171;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const QuantityControl = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+`;
+
+const QuantityButton = styled.button`
+  width: 36px;
+  height: 36px;
+  border: 1px solid #ddd;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #4caf50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #e8f5e9;
+    border-color: #4caf50;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const QuantityDisplay = styled.span`
+  min-width: 40px;
+  text-align: center;
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 1rem;
+`;
 
 interface ShoppingListItemProps {
   item: Ingredient;

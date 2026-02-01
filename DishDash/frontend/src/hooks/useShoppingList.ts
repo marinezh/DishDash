@@ -21,6 +21,7 @@ export function useShoppingList() {
   const [error, setError] = useState<string | null>(null);
   const [removingItem, setRemovingItem] = useState<string | null>(null);
   const [clearing, setClearing] = useState(false);
+  const [showClearAllModal, setShowClearAllModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [formData, setFormData] = useState<FormData>({ name: "", quantity: "", unit: "pcs" });
   const [adding, setAdding] = useState(false);
@@ -229,11 +230,8 @@ export function useShoppingList() {
   };
 
   const handleClearAll = async () => {
-    if (!window.confirm("Are you sure you want to clear the entire shopping list?")) {
-      return;
-    }
-
     try {
+      setShowClearAllModal(false);
       setClearing(true);
       await clearShopping();
       setItems([]);
@@ -252,6 +250,7 @@ export function useShoppingList() {
     error,
     removingItem,
     clearing,
+    showClearAllModal,
     showAddModal,
     formData,
     adding,
@@ -273,6 +272,7 @@ export function useShoppingList() {
     setEmail,
     setShowEmailModal,
     setShowSuccessModal,
+    setShowClearAllModal,
     // Handlers
     handleRemoveItem,
     handleUpdateQuantity,
@@ -280,5 +280,7 @@ export function useShoppingList() {
     handleSendEmail,
     handleWoltOrder,
     handleClearAll,
+    handleOpenClearConfirm: () => setShowClearAllModal(true),
+    handleCancelClearConfirm: () => setShowClearAllModal(false),
   };
 }

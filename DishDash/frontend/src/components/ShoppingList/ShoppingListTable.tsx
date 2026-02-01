@@ -1,6 +1,27 @@
-import { ShoppingListTable, ListHeader } from "./styles";
+import styled from "styled-components";
 import { ShoppingListItemComponent } from "./ShoppingListItem";
 import type { Ingredient } from "../../api";
+
+const ShoppingListTable = styled.div`
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  overflow: hidden;
+`;
+
+const ListHeader = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 100px;
+  gap: 16px;
+  padding: 16px;
+  background: #f5f5f5;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e5e5;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+`;
 
 interface ShoppingListTableProps {
   items: Ingredient[];
