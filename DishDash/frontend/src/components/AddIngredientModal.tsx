@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { UNITS, SECTIONS } from "../utils/constants";
 
@@ -126,8 +126,15 @@ export function AddIngredientModal({ isOpen, onClose, onSubmit, error: externalE
     },
   });
   const [error, setError] = useState<string | null>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   const displayError = externalError || error;
+
+  useEffect(() => {
+    if (isOpen && nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
+  }, [isOpen]);
 
   const handleClose = () => {
     onClose();
@@ -184,6 +191,7 @@ export function AddIngredientModal({ isOpen, onClose, onSubmit, error: externalE
         <FormGroup>
           <Label htmlFor="name">Ingredient name</Label>
           <Input
+            ref={nameInputRef}
             id="name"
             type="text"
             placeholder="egg"

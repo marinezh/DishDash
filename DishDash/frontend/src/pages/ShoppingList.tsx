@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { getShoppingList, removeFromShopping, clearShopping, addToShopping, sendShoppingListToEmail, createWoltOrder } from "../api";
 import type { Ingredient } from "../api";
@@ -385,10 +385,25 @@ export function ShoppingList() {
   const [sendingEmail, setSendingEmail] = useState(false);
   const [sendingWolt, setSendingWolt] = useState(false);
 
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+
   // Load shopping list on mount
   useEffect(() => {
     loadShoppingList();
   }, []);
+
+  useEffect(() => {
+    if (showAddModal && nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
+  }, [showAddModal]);
+
+  useEffect(() => {
+    if (showEmailModal && emailInputRef.current) {
+      emailInputRef.current.focus();
+    }
+  }, [showEmailModal]);
 
   const loadShoppingList = async () => {
     try {
@@ -589,6 +604,7 @@ export function ShoppingList() {
               <FormGroup>
                 <Label htmlFor="name">Item Name *</Label>
                 <Input
+                  ref={nameInputRef}
                   id="name"
                   type="text"
                   value={formData.name}
@@ -674,6 +690,7 @@ export function ShoppingList() {
               <FormGroup>
                 <Label htmlFor="email">Email Address *</Label>
                 <EmailInput
+                  ref={emailInputRef}
                   id="email"
                   type="email"
                   value={email}
