@@ -8,6 +8,7 @@ const ListItem = styled.div`
   padding: 16px;
   border-bottom: 1px solid var(--color-border);
   align-items: center;
+  justify-items: center;
 
   &:last-child {
     border-bottom: none;
@@ -26,6 +27,8 @@ const ListItem = styled.div`
 const ItemName = styled.span`
   font-weight: 500;
   color: var(--color-text);
+  justify-self: start;
+  text-align: left;
 `;
 
 const ItemQuantity = styled.span`

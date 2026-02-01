@@ -6,7 +6,22 @@ import path from "path";
 export default defineConfig(({ mode }) => {
   return {
     base: "/DishDash/",
-    plugins: [react()],
+    plugins: [
+      react({
+        babel: {
+          plugins: [
+            [
+              "babel-plugin-styled-components",
+              {
+                displayName: true,
+                fileName: false,
+                pure: true,
+              },
+            ],
+          ],
+        },
+      }),
+    ],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),

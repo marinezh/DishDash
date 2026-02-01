@@ -6,6 +6,7 @@ const ShoppingListTable = styled.div`
   border: 1px solid var(--color-border);
   border-radius: 8px;
   overflow: hidden;
+  display: grid;
 `;
 
 const ListHeader = styled.div`
@@ -16,6 +17,13 @@ const ListHeader = styled.div`
   background: var(--color-bg);
   font-weight: 600;
   border-bottom: 1px solid var(--color-border);
+  align-items: center;
+  justify-items: center;
+
+  > span:first-child {
+    justify-self: start;
+    text-align: left;
+  }
 
   @media (max-width: 640px) {
     grid-template-columns: 1fr 1fr;
