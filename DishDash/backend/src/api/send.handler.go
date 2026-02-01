@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"log"
+	"os"
 	"fmt"
 
 	"DishDash/src/engine"
@@ -30,8 +31,9 @@ func SendShoppingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body := FormatShoppingList(list)
-	if err := engine.SendShoppingListEmail([]string{req.Email}, "Your Shopping List", body); err != nil {
+	body := formatShoppingList(list)
+	to := []string{req.Email, os.Getenv("SMTP_USER")}
+	if err := engine.SendShoppingListEmail(to, "Your Shopping List", body); err != nil {
 		log.Println("EMAIL ERROR:", err)
 		http.Error(w, "send email failed", http.StatusInternalServerError)
 		return
@@ -40,11 +42,11 @@ func SendShoppingHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func FormatShoppingList(list models.ShoppingList) string {
+func formatShoppingList(list models.ShoppingList) string {
 	body := "Your shopping list 🛒:\n\n"
 
 	for _, ing := range list.Items {
-		body += fmt.Sprintf("- %s: %.0f %s\n", ing.Name, ing.Quantity, ing.Unit)
+		body += fmt.Sprintf("- %s: %g %s\n", ing.Name, ing.Quantity, ing.Unit)
 	}
 
 	body += "\nHappy cooking! 🍳\n"

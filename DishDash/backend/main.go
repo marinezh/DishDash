@@ -18,7 +18,6 @@ func main() {
 		log.Println("No .env file found")
 	}
 
-	log.Println("Server started at :8080")
 	utils.SetDataDir("./data")
 
 	mux := http.NewServeMux()
