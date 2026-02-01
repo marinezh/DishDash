@@ -378,13 +378,15 @@ export function ShoppingList() {
   const [removingItem, setRemovingItem] = useState<string | null>(null);
   const [clearing, setClearing] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [formData, setFormData] = useState({ name: "", quantity: 1, unit: "pcs" });
+  // Quantity stored as string to properly display decimals like "0.5"
+  const [formData, setFormData] = useState({ name: "", quantity: "", unit: "pcs" });
   const [adding, setAdding] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [email, setEmail] = useState("");
   const [sendingEmail, setSendingEmail] = useState(false);
   const [sendingWolt, setSendingWolt] = useState(false);
 
+  // Refs for auto-focusing inputs when modals open
   const nameInputRef = useRef<HTMLInputElement>(null);
   const emailInputRef = useRef<HTMLInputElement>(null);
 
@@ -393,12 +395,14 @@ export function ShoppingList() {
     loadShoppingList();
   }, []);
 
+  // Auto-focus name input when add modal opens
   useEffect(() => {
     if (showAddModal && nameInputRef.current) {
       nameInputRef.current.focus();
     }
   }, [showAddModal]);
 
+  // Auto-focus email input when email modal opens
   useEffect(() => {
     if (showEmailModal && emailInputRef.current) {
       emailInputRef.current.focus();
@@ -450,12 +454,19 @@ export function ShoppingList() {
       return;
     }
 
+    // Validate quantity is a valid number
+    if (!formData.quantity || isNaN(Number(formData.quantity))) {
+      setError("Please enter a valid quantity");
+      return;
+    }
+
     try {
       setAdding(true);
       setError(null);
+      // Convert string quantity to number for API
       await addToShopping([{
         name: formData.name.trim(),
-        quantity: formData.quantity,
+        quantity: Number(formData.quantity),
         unit: formData.unit,
       }]);
       
@@ -464,13 +475,13 @@ export function ShoppingList() {
         ...items,
         {
           name: formData.name.trim(),
-          quantity: formData.quantity,
+          quantity: Number(formData.quantity),
           unit: formData.unit,
         },
       ]);
       
       // Reset form and close modal
-      setFormData({ name: "", quantity: 1, unit: "pcs" });
+      setFormData({ name: "", quantity: "", unit: "pcs" });
       setShowAddModal(false);
     } catch (e) {
       console.error("Add item error:", e);
@@ -621,16 +632,19 @@ export function ShoppingList() {
                   <Label htmlFor="quantity">Quantity</Label>
                   <Input
                     id="quantity"
-                    type="number"
-                    min="0.1"
-                    step="0.1"
+                    type="text"  {/* text type allows "0.5" to display correctly */}
+                    placeholder="e.g., 0.5, 2, 100"
                     value={formData.quantity}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        quantity: parseFloat(e.target.value) || 1,
-                      })
-                    }
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      // Only allow empty string or valid numbers
+                      if (val === "" || !isNaN(Number(val))) {
+                        setFormData({
+                          ...formData,
+                          quantity: val,  // Store as string for proper display
+                        });
+                      }
+                    }}
                   />
                 </FormGroup>
 
