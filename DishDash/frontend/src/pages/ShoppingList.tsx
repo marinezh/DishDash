@@ -15,8 +15,8 @@ const Container = styled.div`
 `;
 
 const ErrorState = styled.div`
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-danger-light);
+  color: var(--color-danger-text);
   padding: 16px;
   border-radius: 8px;
   margin-bottom: 16px;

@@ -5,7 +5,7 @@ const FooterSection = styled.div`
   gap: 12px;
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid var(--color-border);
 
   @media (max-width: 640px) {
     flex-direction: column;
@@ -15,7 +15,7 @@ const FooterSection = styled.div`
 const SendEmailButton = styled.button`
   flex: 1;
   padding: 12px 20px;
-  background-color: #3b82f6;
+  background-color: var(--color-info);
   color: white;
   border: none;
   border-radius: 4px;
@@ -24,7 +24,7 @@ const SendEmailButton = styled.button`
   font-weight: 500;
 
   &:hover {
-    background-color: #2563eb;
+    background-color: var(--color-info-hover);
   }
 
   &:disabled {
@@ -36,7 +36,7 @@ const SendEmailButton = styled.button`
 const WoltButton = styled.button`
   flex: 1;
   padding: 12px 20px;
-  background-color: #5dc2e7;
+  background-color: var(--color-secondary);
   color: white;
   border: none;
   border-radius: 4px;
@@ -45,7 +45,7 @@ const WoltButton = styled.button`
   font-weight: 500;
 
   &:hover {
-    background-color: #4f46e5;
+    background-color: var(--color-secondary-alt);
   }
 
   &:disabled {
@@ -56,7 +56,7 @@ const WoltButton = styled.button`
 
 const FoodoraButton = styled.button<{ $x: number; $y: number }>`
   padding: 12px 20px;
-  background-color: #de1167;
+  background-color: var(--color-accent);
   color: white;
   border: none;
   border-radius: 4px;
@@ -71,7 +71,7 @@ const FoodoraButton = styled.button<{ $x: number; $y: number }>`
   z-index: 1000;
 
   &:hover {
-    background-color: #b21057;
+    background-color: var(--color-accent-hover);
   }
 `;
 

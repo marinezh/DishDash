@@ -6,7 +6,7 @@ const ListItem = styled.div`
   grid-template-columns: 1fr 1fr 1fr 100px;
   gap: 16px;
   padding: 16px;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid var(--color-border);
   align-items: center;
 
   &:last-child {
@@ -14,7 +14,7 @@ const ListItem = styled.div`
   }
 
   &:hover {
-    background: #fafafa;
+    background: var(--color-bg-light);
   }
 
   @media (max-width: 640px) {
@@ -25,19 +25,19 @@ const ListItem = styled.div`
 
 const ItemName = styled.span`
   font-weight: 500;
-  color: #1a1a1a;
+  color: var(--color-text);
 `;
 
 const ItemQuantity = styled.span`
-  color: #666;
+  color: var(--color-text-muted);
   font-size: 0.95rem;
 `;
 
 const RemoveButton = styled.button`
   padding: 6px 12px;
-  background-color: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fca5a5;
+  background-color: var(--color-danger-light);
+  color: var(--color-danger-text);
+  border: 1px solid var(--color-danger-border);
   border-radius: 4px;
   cursor: pointer;
   font-size: 13px;
@@ -65,21 +65,21 @@ const QuantityControl = styled.div`
 const QuantityButton = styled.button`
   width: 36px;
   height: 36px;
-  border: 1px solid #ddd;
-  background-color: #f5f5f5;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg);
   border-radius: 4px;
   cursor: pointer;
   font-size: 1.2rem;
   font-weight: bold;
-  color: #4caf50;
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
 
   &:hover {
-    background-color: #e8f5e9;
-    border-color: #4caf50;
+    background-color: var(--color-primary-light);
+    border-color: var(--color-primary);
   }
 
   &:active {
@@ -96,7 +96,7 @@ const QuantityDisplay = styled.span`
   min-width: 40px;
   text-align: center;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--color-text);
   font-size: 1rem;
 `;
 

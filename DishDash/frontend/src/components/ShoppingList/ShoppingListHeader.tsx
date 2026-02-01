@@ -18,7 +18,7 @@ const ButtonGroup = styled.div`
 
 const AddButton = styled.button`
   padding: 8px 16px;
-  background-color: #4caf50;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 4px;
@@ -27,7 +27,7 @@ const AddButton = styled.button`
   font-weight: 500;
 
   &:hover {
-    background-color: #45a049;
+    background-color: var(--color-primary-hover);
   }
 
   &:disabled {
@@ -38,7 +38,7 @@ const AddButton = styled.button`
 
 const ClearButton = styled.button`
   padding: 8px 16px;
-  background-color: #ef4444;
+  background-color: var(--color-danger);
   color: white;
   border: none;
   border-radius: 4px;
@@ -47,7 +47,7 @@ const ClearButton = styled.button`
   font-weight: 500;
 
   &:hover {
-    background-color: #dc2626;
+    background-color: var(--color-danger-hover);
   }
 
   &:disabled {

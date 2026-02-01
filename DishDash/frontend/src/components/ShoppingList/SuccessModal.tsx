@@ -14,18 +14,18 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background: white;
+  background: var(--color-white);
   border-radius: 12px;
   padding: 24px;
   width: 90%;
   max-width: 500px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-sm);
 `;
 
 const ModalTitle = styled.h2`
   margin: 0 0 20px 0;
   font-size: 1.5rem;
-  color: #1a1a1a;
+  color: var(--color-text);
 `;
 
 const ButtonRow = styled.div`
@@ -37,7 +37,7 @@ const ButtonRow = styled.div`
 const SubmitButton = styled.button`
   flex: 1;
   padding: 10px 16px;
-  background-color: #4caf50;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 4px;
@@ -46,7 +46,7 @@ const SubmitButton = styled.button`
   font-weight: 500;
 
   &:hover {
-    background-color: #45a049;
+    background-color: var(--color-primary-hover);
   }
 
   &:disabled {

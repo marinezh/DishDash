@@ -3,7 +3,7 @@ import { ShoppingListItemComponent } from "./ShoppingListItem";
 import type { Ingredient } from "../../api";
 
 const ShoppingListTable = styled.div`
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   overflow: hidden;
 `;
@@ -13,9 +13,9 @@ const ListHeader = styled.div`
   grid-template-columns: 1fr 1fr 1fr 100px;
   gap: 16px;
   padding: 16px;
-  background: #f5f5f5;
+  background: var(--color-bg);
   font-weight: 600;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid var(--color-border);
 
   @media (max-width: 640px) {
     grid-template-columns: 1fr 1fr;

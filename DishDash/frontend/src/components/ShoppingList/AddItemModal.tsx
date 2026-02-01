@@ -14,18 +14,18 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background: white;
+  background: var(--color-white);
   border-radius: 12px;
   padding: 24px;
   width: 90%;
   max-width: 500px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-sm);
 `;
 
 const ModalTitle = styled.h2`
   margin: 0 0 20px 0;
   font-size: 1.5rem;
-  color: #1a1a1a;
+  color: var(--color-text);
 `;
 
 const FormGroup = styled.div`
@@ -36,21 +36,21 @@ const Label = styled.label`
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
-  color: #1a1a1a;
+  color: var(--color-text);
   font-size: 0.95rem;
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   font-size: 0.95rem;
   box-sizing: border-box;
 
   &:focus {
     outline: none;
-    border-color: #4caf50;
+    border-color: var(--color-primary);
     box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
   }
 `;
@@ -70,7 +70,7 @@ const ButtonRow = styled.div`
 const SubmitButton = styled.button`
   flex: 1;
   padding: 10px 16px;
-  background-color: #4caf50;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 4px;
@@ -79,7 +79,7 @@ const SubmitButton = styled.button`
   font-weight: 500;
 
   &:hover {
-    background-color: #45a049;
+    background-color: var(--color-primary-hover);
   }
 
   &:disabled {
@@ -91,8 +91,8 @@ const SubmitButton = styled.button`
 const CancelButton = styled.button`
   flex: 1;
   padding: 10px 16px;
-  background-color: #e5e5e5;
-  color: #1a1a1a;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   border: none;
   border-radius: 4px;
   cursor: pointer;
