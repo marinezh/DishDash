@@ -41,6 +41,7 @@ func main() {
 	mux.HandleFunc("/shopping/set", api.SetShoppingHandler)
 	mux.HandleFunc("/shopping/remove", api.RemoveFromShoppingHandler)
 	mux.HandleFunc("/shopping/clear", api.ClearShoppingHandler)
+	mux.HandleFunc("/shopping/send", api.SendShoppingHandler)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"http://localhost:5173",
