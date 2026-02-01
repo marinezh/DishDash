@@ -3,40 +3,26 @@ package engine
 import (
 	"os"
 	"net/smtp"
-	"strings"
 	"fmt"
-
-	"DishDash/src/models"
 )
 
-func SendShoppingListEmail(to string, list models.ShoppingList) error {
-	var body strings.Builder
-	body.WriteString("Your shopping list:\n\n")
+func SendShoppingListEmail(to []string, subject, body string) error {
 
-	for _, it := range list.Items {
-		body.WriteString(fmt.Sprintf(
-			"- %s: %d %s\n",
-			it.Name,
-			it.Quantity,
-			it.Unit,
-		))
+	from := os.Getenv("SMTP_FROM")
+	user := os.Getenv("SMTP_USER")
+	pass := os.Getenv("SMTP_PASS")
+	addr := os.Getenv("SMTP_ADDR")
+
+	if from == "" || user == "" || pass == "" || addr == "" {
+		return fmt.Errorf("SMTP config missing")
 	}
 
-	msg := fmt.Sprintf(
-		"Subject: Shopping List\n\n%s",
-		body.String(),
-	)
+	auth := smtp.PlainAuth("", user, pass, os.Getenv("SMTP_HOST"))
 
-	return smtp.SendMail(
-		os.Getenv("SMTP_ADDR"),
-		smtp.PlainAuth(
-			"",
-			os.Getenv("SMTP_USER"),
-			os.Getenv("SMTP_PASS"),
-			os.Getenv("SMTP_HOST"),
-		),
-		os.Getenv("SMTP_FROM"),
-		[]string{to},
-		[]byte(msg),
-	)
+	msg := []byte(fmt.Sprintf(
+		"From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s",
+		from, to[0], subject, body,
+	))
+
+	return smtp.SendMail(addr, auth, from, to, msg)
 }
