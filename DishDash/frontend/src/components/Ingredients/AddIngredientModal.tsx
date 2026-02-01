@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { UNITS, SECTIONS } from "../utils/constants";
+import { UNITS, SECTIONS } from "../../utils/constants";
 
 export type AddIngredientPayload = {
 	section: "fresh" | "pantry" | "rare";
