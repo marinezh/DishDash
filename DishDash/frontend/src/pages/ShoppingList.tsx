@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { getShoppingList, removeFromShopping, clearShopping, addToShopping, sendShoppingListToEmail, createWoltOrder } from "../api";
 import type { Ingredient } from "../api";
@@ -318,8 +318,7 @@ const FooterSection = styled.div`
   gap: 12px;
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid #e5e5e5;
-
+  // border-top: 1px solid #ea2424;
   @media (max-width: 640px) {
     flex-direction: column;
   }
@@ -349,7 +348,7 @@ const SendEmailButton = styled.button`
 const WoltButton = styled.button`
   flex: 1;
   padding: 12px 20px;
-  background-color: #6366f1;
+  background-color: #5dc2e7;
   color: white;
   border: none;
   border-radius: 4px;
@@ -366,6 +365,24 @@ const WoltButton = styled.button`
     cursor: not-allowed;
   }
 `;
+const FoodoraButton = styled.button<{ $x: number; $y: number }>`
+  padding: 12px 20px;
+  background-color: #de1167;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: left 0.15s ease, top 0.15s ease;
+
+  position: fixed;
+  left: ${p => `${p.$x}px`};
+  top: ${p => `${p.$y}px`};
+  z-index: 1000;
+
+  &:hover { background-color: #b21057; }
+`;
 
 const EmailModalContent = styled(ModalContent)``;
 
@@ -378,16 +395,85 @@ export function ShoppingList() {
   const [removingItem, setRemovingItem] = useState<string | null>(null);
   const [clearing, setClearing] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [formData, setFormData] = useState({ name: "", quantity: 1, unit: "pcs" });
+  // Quantity stored as string to properly display decimals like "0.5"
+  const [formData, setFormData] = useState({ name: "", quantity: "", unit: "pcs" });
   const [adding, setAdding] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [email, setEmail] = useState("");
   const [sendingEmail, setSendingEmail] = useState(false);
   const [sendingWolt, setSendingWolt] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  //const [foodoraPosition, setFoodoraPosition] = useState<{ x: number; y: number } | null>(null);
+	const [foodoraPosition, setFoodoraPosition] = useState({ x: 40, y: 40 });
+
+
+  // Refs for auto-focusing inputs when modals open
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const foodoraButtonRef = useRef<HTMLButtonElement>(null);
 
   // Load shopping list on mount
   useEffect(() => {
     loadShoppingList();
+  }, []);
+
+  // Auto-focus name input when add modal opens
+  useEffect(() => {
+    if (showAddModal && nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
+  }, [showAddModal]);
+
+  // Auto-focus email input when email modal opens
+  useEffect(() => {
+    if (showEmailModal && emailInputRef.current) {
+      emailInputRef.current.focus();
+    }
+  }, [showEmailModal]);
+
+  // Initialize Foodora button position at bottom-right
+  useEffect(() => {
+    setFoodoraPosition({
+      x: Math.max(10, window.innerWidth - 260),
+      y: Math.max(10, window.innerHeight - 80),
+    });
+  }, []);
+
+  // Make Foodora button run away from cursor
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const button = foodoraButtonRef.current;
+      if (!button) return;
+
+      const rect = button.getBoundingClientRect();
+      const buttonCenterX = rect.left + rect.width / 2;
+      const buttonCenterY = rect.top + rect.height / 2;
+      
+      const distance = Math.hypot(
+        e.clientX - buttonCenterX,
+        e.clientY - buttonCenterY
+      );
+
+      // If mouse gets within 150px, move button away
+      if (distance < 150) {
+        console.log('Button running away! Distance:', distance);
+        const w = rect.width;
+        const h = rect.height;
+        const maxX = window.innerWidth - w - 10;
+        const maxY = window.innerHeight - h - 10;
+
+        const newPos = {
+          x: Math.random() * Math.max(10, maxX),
+          y: Math.random() * Math.max(10, maxY),
+        };
+        console.log('New position:', newPos);
+        setFoodoraPosition(newPos);
+      }
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    return () => document.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   const loadShoppingList = async () => {
@@ -435,12 +521,19 @@ export function ShoppingList() {
       return;
     }
 
+    // Validate quantity is a valid number
+    if (!formData.quantity || isNaN(Number(formData.quantity))) {
+      setError("Please enter a valid quantity");
+      return;
+    }
+
     try {
       setAdding(true);
       setError(null);
+      // Convert string quantity to number for API
       await addToShopping([{
         name: formData.name.trim(),
-        quantity: formData.quantity,
+        quantity: Number(formData.quantity),
         unit: formData.unit,
       }]);
       
@@ -449,13 +542,13 @@ export function ShoppingList() {
         ...items,
         {
           name: formData.name.trim(),
-          quantity: formData.quantity,
+          quantity: Number(formData.quantity),
           unit: formData.unit,
         },
       ]);
       
       // Reset form and close modal
-      setFormData({ name: "", quantity: 1, unit: "pcs" });
+      setFormData({ name: "", quantity: "", unit: "pcs" });
       setShowAddModal(false);
     } catch (e) {
       console.error("Add item error:", e);
@@ -476,9 +569,10 @@ export function ShoppingList() {
     try {
       setSendingEmail(true);
       setError(null);
-      await sendShoppingListToEmail(email, items);
-      alert("Shopping list sent to " + email);
+      await sendShoppingListToEmail(email);
       setShowEmailModal(false);
+      setSuccessMessage(`Shopping list sent to ${email}! 📧`);
+      setShowSuccessModal(true);
       setEmail("");
     } catch (e) {
       console.error("Send email error:", e);
@@ -493,9 +587,17 @@ export function ShoppingList() {
       setSendingWolt(true);
       setError(null);
       const result = await createWoltOrder(items);
-      // Open Wolt order in new tab
-      window.open(result.url, "_blank");
-      alert("Order created! Check Wolt for details.");
+      
+      // Check if this is the future implementation placeholder
+      if (result.orderId === "FUTURE_IMPLEMENTATION") {
+        setSuccessMessage("🚧 This feature is under development.");
+        setShowSuccessModal(true);
+      } else {
+        // Open Wolt order in new tab
+        window.open(result.url, "_blank");
+        setSuccessMessage("Order created! Check Wolt for details. 🚀");
+        setShowSuccessModal(true);
+      }
     } catch (e) {
       console.error("Create Wolt order error:", e);
       setError((e as Error).message ?? "Failed to create Wolt order");
@@ -589,6 +691,7 @@ export function ShoppingList() {
               <FormGroup>
                 <Label htmlFor="name">Item Name *</Label>
                 <Input
+                  ref={nameInputRef}
                   id="name"
                   type="text"
                   value={formData.name}
@@ -605,16 +708,19 @@ export function ShoppingList() {
                   <Label htmlFor="quantity">Quantity</Label>
                   <Input
                     id="quantity"
-                    type="number"
-                    min="0.1"
-                    step="0.1"
+                    type="text"  //text type allows "0.5" to display with leading zero
+                    placeholder="e.g., 0.5, 2, 100"
                     value={formData.quantity}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        quantity: parseFloat(e.target.value) || 1,
-                      })
-                    }
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      // Only allow empty string or valid numbers
+                      if (val === "" || !isNaN(Number(val))) {
+                        setFormData({
+                          ...formData,
+                          quantity: val,  // Store as string for proper display
+                        });
+                      }
+                    }}
                   />
                 </FormGroup>
 
@@ -666,6 +772,17 @@ export function ShoppingList() {
         </FooterSection>
       )}
 
+      {/* Foodora button - outside FooterSection so fixed positioning works */}
+      {items.length > 0 && (
+        <FoodoraButton
+          ref={foodoraButtonRef}
+          $x={foodoraPosition.x}
+          $y={foodoraPosition.y}
+        >
+          🛒 Create Foodora Order
+        </FoodoraButton>
+      )}
+
       {showEmailModal && (
         <ModalOverlay onClick={() => setShowEmailModal(false)}>
           <EmailModalContent onClick={(e) => e.stopPropagation()}>
@@ -674,6 +791,7 @@ export function ShoppingList() {
               <FormGroup>
                 <Label htmlFor="email">Email Address *</Label>
                 <EmailInput
+                  ref={emailInputRef}
                   id="email"
                   type="email"
                   value={email}
@@ -697,6 +815,26 @@ export function ShoppingList() {
               </ButtonRow>
             </form>
           </EmailModalContent>
+        </ModalOverlay>
+      )}
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <ModalOverlay onClick={() => setShowSuccessModal(false)}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <ModalTitle>✅ Success!</ModalTitle>
+            <p style={{ fontSize: '1.1rem', margin: '16px 0 24px', color: '#333' }}>
+              {successMessage}
+            </p>
+            <ButtonRow>
+              <SubmitButton
+                type="button"
+                onClick={() => setShowSuccessModal(false)}
+              >
+                OK
+              </SubmitButton>
+            </ButtonRow>
+          </ModalContent>
         </ModalOverlay>
       )}
     </Container>
