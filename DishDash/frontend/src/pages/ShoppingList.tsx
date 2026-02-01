@@ -502,7 +502,7 @@ export function ShoppingList() {
     try {
       setSendingEmail(true);
       setError(null);
-      await sendShoppingListToEmail(email, items);
+      await sendShoppingListToEmail(email);
       alert("Shopping list sent to " + email);
       setShowEmailModal(false);
       setEmail("");
@@ -632,7 +632,7 @@ export function ShoppingList() {
                   <Label htmlFor="quantity">Quantity</Label>
                   <Input
                     id="quantity"
-                    type="text"  {/* text type allows "0.5" to display correctly */}
+                    type="text"  //text type allows "0.5" to display with leading zero
                     placeholder="e.g., 0.5, 2, 100"
                     value={formData.quantity}
                     onChange={(e) => {
