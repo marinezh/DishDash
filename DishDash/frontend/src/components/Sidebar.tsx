@@ -1,5 +1,5 @@
-import { NavLink } from "react-router-dom";
 import styled from "styled-components";
+import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { status } from "../api";
 
@@ -48,9 +48,9 @@ const NavItem = styled(NavLink)`
   gap: 10px;
 
   &.active {
-	color: ${({ theme }) => theme.colors.text};
-	background: rgba(57, 228, 19, 0.18);
-	border: 1px solid rgba(59, 130, 246, 0.35);
+	color: ${({ theme }) => theme.colors.title};
+	background: rgba(31, 169, 228, 0.1);
+	border: 1px solid rgba(31, 169, 228, 0.3);
   }
 
   &:hover {
@@ -62,19 +62,11 @@ const NavIcon = styled.img`
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-  opacity: 0.7;
-  
-  ${NavItem}.active & {
-	opacity: 1;
-  }
 `;
 
 const Text = styled.p`
   font-size: 14px;
-
-  ${NavItem}.active & {
-	opacity: 1;
-  }
+  margin: 0;
 `;
 
 const StatusIndicator = styled.div<{ ok: boolean }>`
@@ -130,20 +122,36 @@ export function Sidebar() {
 	  </Brand>
 	  <Nav>
 		<NavItem to="/ingredients">
-			<NavIcon src="/icons/ingredients.svg" alt="ing" /> 
-			<Text>Ingredients</Text>
+		  {({ isActive }) => (
+			<>
+			  <NavIcon src={isActive ? "/icons/ingredients_active.svg" : "/icons/ingredients.svg"} alt="Ingredients" />
+			  <Text>Ingredients</Text>
+			</>
+		  )}
 		</NavItem>
 		<NavItem to="/recipes">
-			 <NavIcon src="/icons/hat.svg" alt="hat" />
-			 <Text>Recipes</Text>
+		  {({ isActive }) => (
+			<>
+			  <NavIcon src={isActive ? "/icons/hat_active.svg" : "/icons/hat.svg"} alt="Recipes" />
+			  <Text>Recipes</Text>
+			</>
+		  )}
 		</NavItem>
 		<NavItem to="/favorites">
-			<NavIcon src="/icons/like.svg" alt="like" />
-			<Text>Favorites</Text>
+		  {({ isActive }) => (
+			<>
+			  <NavIcon src={isActive ? "/icons/like_active.svg" : "/icons/like.svg"} alt="Favorites" />
+			  <Text>Favorites</Text>
+			</>
+		  )}
 		</NavItem>
 		<NavItem to="/shopping-list">
-			<NavIcon src="/icons/cart.svg" alt="cart" />
-			<Text>Shopping List</Text>
+		  {({ isActive }) => (
+			<>
+			  <NavIcon src={isActive ? "/icons/cart_active.svg" : "/icons/cart.svg"} alt="Shopping List" />
+			  <Text>Shopping List</Text>
+			</>
+		  )}
 		</NavItem>
 	  </Nav>
 	  <StatusIndicator ok={statusState?.ok ?? false}>

@@ -6,7 +6,7 @@ export const theme = {
     text: "#000000",
     title: "#1FA9E4",
     muted: "#000000",
-    active: "#3b82f6",
+    active: "#1FA9E4",
 	  check: "yellow"
   },
   radius: {
