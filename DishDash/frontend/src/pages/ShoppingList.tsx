@@ -318,8 +318,7 @@ const FooterSection = styled.div`
   gap: 12px;
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid #e5e5e5;
-
+  // border-top: 1px solid #ea2424;
   @media (max-width: 640px) {
     flex-direction: column;
   }
@@ -349,7 +348,7 @@ const SendEmailButton = styled.button`
 const WoltButton = styled.button`
   flex: 1;
   padding: 12px 20px;
-  background-color: #6366f1;
+  background-color: #5dc2e7;
   color: white;
   border: none;
   border-radius: 4px;
@@ -365,6 +364,24 @@ const WoltButton = styled.button`
     background-color: #cccccc;
     cursor: not-allowed;
   }
+`;
+const FoodoraButton = styled.button<{ $x: number; $y: number }>`
+  padding: 12px 20px;
+  background-color: #de1167;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: left 0.15s ease, top 0.15s ease;
+
+  position: fixed;
+  left: ${p => `${p.$x}px`};
+  top: ${p => `${p.$y}px`};
+  z-index: 1000;
+
+  &:hover { background-color: #b21057; }
 `;
 
 const EmailModalContent = styled(ModalContent)``;
@@ -385,10 +402,16 @@ export function ShoppingList() {
   const [email, setEmail] = useState("");
   const [sendingEmail, setSendingEmail] = useState(false);
   const [sendingWolt, setSendingWolt] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  //const [foodoraPosition, setFoodoraPosition] = useState<{ x: number; y: number } | null>(null);
+	const [foodoraPosition, setFoodoraPosition] = useState({ x: 40, y: 40 });
+
 
   // Refs for auto-focusing inputs when modals open
   const nameInputRef = useRef<HTMLInputElement>(null);
   const emailInputRef = useRef<HTMLInputElement>(null);
+  const foodoraButtonRef = useRef<HTMLButtonElement>(null);
 
   // Load shopping list on mount
   useEffect(() => {
@@ -408,6 +431,50 @@ export function ShoppingList() {
       emailInputRef.current.focus();
     }
   }, [showEmailModal]);
+
+  // Initialize Foodora button position at bottom-right
+  useEffect(() => {
+    setFoodoraPosition({
+      x: Math.max(10, window.innerWidth - 260),
+      y: Math.max(10, window.innerHeight - 80),
+    });
+  }, []);
+
+  // Make Foodora button run away from cursor
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const button = foodoraButtonRef.current;
+      if (!button) return;
+
+      const rect = button.getBoundingClientRect();
+      const buttonCenterX = rect.left + rect.width / 2;
+      const buttonCenterY = rect.top + rect.height / 2;
+      
+      const distance = Math.hypot(
+        e.clientX - buttonCenterX,
+        e.clientY - buttonCenterY
+      );
+
+      // If mouse gets within 150px, move button away
+      if (distance < 150) {
+        console.log('Button running away! Distance:', distance);
+        const w = rect.width;
+        const h = rect.height;
+        const maxX = window.innerWidth - w - 10;
+        const maxY = window.innerHeight - h - 10;
+
+        const newPos = {
+          x: Math.random() * Math.max(10, maxX),
+          y: Math.random() * Math.max(10, maxY),
+        };
+        console.log('New position:', newPos);
+        setFoodoraPosition(newPos);
+      }
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    return () => document.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   const loadShoppingList = async () => {
     try {
@@ -503,8 +570,9 @@ export function ShoppingList() {
       setSendingEmail(true);
       setError(null);
       await sendShoppingListToEmail(email);
-      alert("Shopping list sent to " + email);
       setShowEmailModal(false);
+      setSuccessMessage(`Shopping list sent to ${email}! 📧`);
+      setShowSuccessModal(true);
       setEmail("");
     } catch (e) {
       console.error("Send email error:", e);
@@ -519,9 +587,17 @@ export function ShoppingList() {
       setSendingWolt(true);
       setError(null);
       const result = await createWoltOrder(items);
-      // Open Wolt order in new tab
-      window.open(result.url, "_blank");
-      alert("Order created! Check Wolt for details.");
+      
+      // Check if this is the future implementation placeholder
+      if (result.orderId === "FUTURE_IMPLEMENTATION") {
+        setSuccessMessage("🚧 This feature is under development.");
+        setShowSuccessModal(true);
+      } else {
+        // Open Wolt order in new tab
+        window.open(result.url, "_blank");
+        setSuccessMessage("Order created! Check Wolt for details. 🚀");
+        setShowSuccessModal(true);
+      }
     } catch (e) {
       console.error("Create Wolt order error:", e);
       setError((e as Error).message ?? "Failed to create Wolt order");
@@ -696,6 +772,17 @@ export function ShoppingList() {
         </FooterSection>
       )}
 
+      {/* Foodora button - outside FooterSection so fixed positioning works */}
+      {items.length > 0 && (
+        <FoodoraButton
+          ref={foodoraButtonRef}
+          $x={foodoraPosition.x}
+          $y={foodoraPosition.y}
+        >
+          🛒 Create Foodora Order
+        </FoodoraButton>
+      )}
+
       {showEmailModal && (
         <ModalOverlay onClick={() => setShowEmailModal(false)}>
           <EmailModalContent onClick={(e) => e.stopPropagation()}>
@@ -728,6 +815,26 @@ export function ShoppingList() {
               </ButtonRow>
             </form>
           </EmailModalContent>
+        </ModalOverlay>
+      )}
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <ModalOverlay onClick={() => setShowSuccessModal(false)}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <ModalTitle>✅ Success!</ModalTitle>
+            <p style={{ fontSize: '1.1rem', margin: '16px 0 24px', color: '#333' }}>
+              {successMessage}
+            </p>
+            <ButtonRow>
+              <SubmitButton
+                type="button"
+                onClick={() => setShowSuccessModal(false)}
+              >
+                OK
+              </SubmitButton>
+            </ButtonRow>
+          </ModalContent>
         </ModalOverlay>
       )}
     </Container>

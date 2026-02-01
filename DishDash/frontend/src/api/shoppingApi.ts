@@ -47,12 +47,13 @@ export async function sendShoppingListToEmail(email: string): Promise<void> {
 }
 
 export async function createWoltOrder(items: Ingredient[]): Promise<{ orderId: string; url: string }> {
-  const res = await fetch(`${BASE_URL}/shopping/wolt`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ items }),
+  // TODO: Future implementation - integrate with Wolt API
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        orderId: "FUTURE_IMPLEMENTATION",
+        url: "#"
+      });
+    }, 500);
   });
-
-  if (!res.ok) throw new Error(`create wolt order failed with ${res.status}`);
-  return res.json();
 }
